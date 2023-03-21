@@ -1,0 +1,159 @@
+pizza set from Maven Analytics found here: https://app.mavenanalytics.io/datasets
+(Source: Vincent Arel-Bundock (Rdatasets))
+(License: Public Domain)
+Create workbook in Excel
+Import all worksheets
+
+Questions to ask:
+--What is our profit breakdown by month?
+--How many pizzas did we sell each month?
+--What are our most popular pizzas?
+--What days are the most pizzas usually sold? 
+--Rank the categories of pizzas by popularity
+--What size is the most popular?
+
+Clean the data first and check for any duplicates in the orders
+table. There are none, so clean up the rest of the worksheets by
+changing price rows to currency.
+
+First let's find out what sizes of pizzas we offer.
+
+On the pizzas worksheet, filter C column and copy data to show unique values.
+
+Select values in row C >
+Select Data > Advanced >
+Under action in the popup window, select "copy to another location" and in the empty "Copy to:" box, select a location on your worksheet where you would like the list >
+Check "Unique records only" and click ok
+
+Your unique sizes list will show the following sizes available:
+
+S
+M
+L
+S
+XL
+XXL
+
+Now let's find out how many pizzas are ordered by each size.
+
+Go to the order_details worksheet and create a table with pizza_size and count as headers and enter the sizes available in the rows.
+
+The pizza_id uses the pizza's size at the end of each name. Let's isolate that. Starting with the small pizza, enter the following formula:
+
+=SUMIF(C2:C48621,"*_s", D2:D48621)
+
+This will give us the sum of all pizzas ordered with the _s (small) designation.
+
+Change the criteria for each of the other sizes to complete your table using "*_m", "*_l", etc.
+
+Here is what we come up with:
+pizza_size	count
+small		14403
+medium	15635
+large		18956
+XL		552
+XXL		28
+SUM		49574
+
+Let's check our calculations by calculating the SUM of the quantity column and ensure they match.
+
+=SUM(D2:D48621)
+49574
+
+Looks good!
+
+Format your table as a table.
+
+Use that table to create a pivot table. Highlight the table, under the Insert tab, click Pivot Table. Add to a new sheet.
+Add pizza size to rows, and sum of count to values.
+
+Now let's grab just the names of the pizzas, irrespective of their sizes.
+
+In row D1, create a new row titled pizza type. In D2, enter the following formula:
+=LEFT(C2,LEN(C2)-2)
+
+This will remove the size from the pizza_id and leave us with the name EXCEPT in the case of the XL and XXL pizzas. 
+Go in and edit those by using find and replace. 
+
+Now let's find out how many of each type of pizza have been ordered
+
+I copied the pizza_type_id and name from the pizza_types worksheet and pasted it into the order_details worksheet. 
+I then used the following formula to count how many of each type of pizza were ordered:
+
+=SUMIF(C2:C48621,[@[pizza_type_id]] & "*", D2:D48621)
+
+the [@]pizza_type_id]] was added by clicking on the corresponding pizza_type_id in the table (J4). The star means it will use all sizes of the pizza in that type.
+
+Using the criteria of J4 as the reference rather than manually typing in each type of pizza made the autofill option really easy to fill in the rest of the table. 
+HOWEVER, I had to manually edit the auto fill to incoporate the correct domains. Each subsequent row formula removed a row of from both the left and right 
+sides of the formula. Solve this by double clicking on the cell and using moving the blue and purple areas back up to C2 and D2. I then got errors that I ignored. 
+
+I would advise simply ignoring all errors, but I felt confident I was correct, because the SUM of my counted pizzas equaled the SUM in my other tables, 
+thereby verifying my calculations.
+
+Create a pivot table with this info. Name will be under rows and sum of count under values.
+
+Now let's look at what categories of pizzas are the most popular.
+
+Like most things, there are several ways to do this but I chose to simply use the SUM formula and highlight the pizzas for each category and list them in 
+their own table. My output is as such:
+
+category	pizzas_per_category
+chicken	11050
+classic	14888
+supreme	11987
+veggie	11649
+
+Create a pivot table for this table as well. Category will be under rows and sum of pizzas_per_category will be under values. 
+
+Now let's compare sales data based on days and months of the year.
+
+On the orders worksheet, add a new column next to the date column titled day. Enter the formula:
+=TEXT(A2,"ddd")
+
+This references the date column and gives you the day. Copy and PASTE VALUE into a new column and delete the original column.
+
+Now we want to break down orders and profit according to days and months so let's create a new table in an empty worksheet. Copy the order_id, pizza_id, 
+and quantity columns and paste into an empty worksheet.
+
+In your new price column, let's use VLOOKUP to add the corresponding prices for each pizza.
+
+=VLOOKUP(Dashboard!B187,pizzas!A:D,4,)
+
+Use auto fill to promulgate the rest of the column. Click on the column header and change the data to currency.
+
+Now, let's fill in the date of the orders also using VLOOKUP.
+
+In the new date column, enter the following:
+
+=VLOOKUP(A2,orders!A:D, 2,)
+
+Make sure the column is listed as "short date" and auto fill the rest of the column. While we're at it, let's go ahead and find out the days too, by doing what we 
+did above. Copy and PASTE VALUES the date column and change to short date, then change the format to day. Copy and PASTE VALUE the new day column and delete the 
+original.
+
+Create a pivot table from this information.
+
+To learn our gross profit by each month, select month under rows and sum of price under values. 
+To learn how many pizzas we sold each month, drop pizza_id to values. 
+
+Clean up your tables. Under rows > months > remove field
+sum of price > format number > currency > 0 decimal places
+
+Select which visuals you would like for your pivot tables. Design your dashboard and drop your visuals into it.
+
+
+To download the workbook featured in this project, go to autumnhernandez.com
+
+
+
+
+
+
+
+
+
+
+
+
+
